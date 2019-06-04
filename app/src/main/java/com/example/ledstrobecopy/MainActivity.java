@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity  {
         volatile boolean onBlink_CameraAttribute;
         volatile boolean releaseRequested_CameraAttribute;
         final /* synthetic */ MainActivity threadCameraAttribute;
+        int pulseNumber=0;
 
         private classRunnableThread(MainActivity mainActivity) {
             this.threadCameraAttribute = mainActivity;
@@ -139,14 +140,22 @@ public class MainActivity extends AppCompatActivity  {
                 this.threadCameraAttribute.releaseCamera();
                 return;
             }
-            while (this.onBlink_CameraAttribute && this.threadCameraAttribute.cameraManager != null) {
-                this.threadCameraAttribute.setparametersCamara_OFF();
+            while ((this.onBlink_CameraAttribute && this.threadCameraAttribute.cameraManager != null)&&(pulseNumber<=200)) {
+                ++pulseNumber;
+                this.threadCameraAttribute.setparametersCamara_ON();
                 try {
-                    Thread.sleep((long) 1/*this.threadCameraAttribute.timeSleep_ms*/, 10000);
+                    Thread.sleep((long) 20); ///*this.threadCameraAttribute.timeSleep_ms*/, 10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                this.threadCameraAttribute.setparametersCamara_ON();
+                this.threadCameraAttribute.setparametersCamara_OFF();
+
+                try {
+                    Thread.sleep((long) 20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 /*if (!this.onBlink_CameraAttribute) {
                     this.threadCameraAttribute.setparametersCamara_OFF();
                 }*/
