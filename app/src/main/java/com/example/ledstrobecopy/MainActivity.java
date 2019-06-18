@@ -5,23 +5,15 @@ import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Build.VERSION;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -44,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private classRunnableThread thread1;
     private Executor executorOfThread1;
     private List<String> listOfSupportedModes;
+    EditText    pulse_number_Input;
+    int MAX_PULSE_NUMBER=4;
 
     public void initParametersCamera() {
         if (this.cameraManager == null) {
@@ -127,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         //thread1.run();
 
+        MAX_PULSE_NUMBER = Integer.valueOf(pulse_number_Input.getText().toString());
         thread1.onBlink_CameraAttribute = true;
         onStart();
         onResume();
@@ -142,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         volatile boolean onBlink_CameraAttribute;
         volatile boolean releaseRequested_CameraAttribute;
         final /* synthetic */ MainActivity threadCameraAttribute;
-        int pulseNumber=0;
+        int pulseNumber_count=0;
 
         private classRunnableThread(MainActivity mainActivity) {
             this.threadCameraAttribute = mainActivity;
@@ -155,8 +150,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.threadCameraAttribute.releaseCamera();
                 return;
             }
-            while ((this.onBlink_CameraAttribute && this.threadCameraAttribute.cameraManager != null)&&(pulseNumber<=4)) {
-                ++pulseNumber;
+            while ((this.onBlink_CameraAttribute && this.threadCameraAttribute.cameraManager != null)&&(pulseNumber_count<MAX_PULSE_NUMBER)) {
+                ++pulseNumber_count;
                 this.threadCameraAttribute.setparametersCamara_ON();
                 try {
                     Thread.sleep((long) 20); ///*this.threadCameraAttribute.timeSleep_ms*/, 10000);
@@ -175,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     this.threadCameraAttribute.setparametersCamara_OFF();
                 }*/
             }
-            pulseNumber=0;
+            pulseNumber_count=0;
         }
     }
 
@@ -224,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button  startBlink    =   findViewById(R.id.start_blinking);
+        Button  startBlink    =   findViewById(R.id.start_blinking_ID);
         this.executorOfThread1 = Executors.newSingleThreadExecutor();
         this.thread1 = new classRunnableThread(this);
         thread1.setPriority(Thread.MAX_PRIORITY);
@@ -234,15 +229,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.cameraManager.release();
             this.cameraManager = null;
         }
-        //this.executorOfThread1.execute(this.thread1);
-        /*
-        thread1.onBlink_CameraAttribute = true;
-        onStart();
-        onResume();
-        //executorOfThread1.execute(this.thread1);
-        thread1.run();
-        releaseCamera();
-        */
+
+        pulse_number_Input = findViewById(R.id.pulse_number_ID);
+
+
         startBlink.setOnClickListener(this);
     }
 }
