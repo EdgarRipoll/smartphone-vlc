@@ -37,7 +37,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Executor executorOfThread1;
     private List<String> listOfSupportedModes;
     EditText    pulse_number_Input;
+    EditText    pulse_time_Input;
     int MAX_PULSE_NUMBER=4;
+    int PULSE_TIME=20;
 
     public void initParametersCamera() {
         if (this.cameraManager == null) {
@@ -122,6 +124,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //thread1.run();
 
         MAX_PULSE_NUMBER = Integer.valueOf(pulse_number_Input.getText().toString());
+        PULSE_TIME  =   Integer.valueOf(pulse_time_Input.getText().toString());
+
         thread1.onBlink_CameraAttribute = true;
         onStart();
         onResume();
@@ -154,14 +158,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ++pulseNumber_count;
                 this.threadCameraAttribute.setparametersCamara_ON();
                 try {
-                    Thread.sleep((long) 20); ///*this.threadCameraAttribute.timeSleep_ms*/, 10000);
+                    Thread.sleep((long) PULSE_TIME); ///*this.threadCameraAttribute.timeSleep_ms*/, 10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 this.threadCameraAttribute.setparametersCamara_OFF();
 
                 try {
-                    Thread.sleep((long) 20);
+                    Thread.sleep((long) PULSE_TIME);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -231,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         pulse_number_Input = findViewById(R.id.pulse_number_ID);
+        pulse_time_Input   = findViewById(R.id.pulse_time_ID);
 
 
         startBlink.setOnClickListener(this);
