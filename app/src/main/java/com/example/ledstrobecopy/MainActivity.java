@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String tagLogd = MainActivity.class.getSimpleName();
     private TextView frequencyProgressText;
@@ -122,6 +123,20 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        //thread1.run();
+
+        thread1.onBlink_CameraAttribute = true;
+        onStart();
+        onResume();
+        //executorOfThread1.execute(this.thread1);
+        thread1.run();
+        releaseCamera();
+        //releaseCamera();
+        //onDestroy();
+    }
+
     private class classRunnableThread extends Thread implements Runnable {
 
         volatile boolean onBlink_CameraAttribute;
@@ -140,7 +155,7 @@ public class MainActivity extends AppCompatActivity  {
                 this.threadCameraAttribute.releaseCamera();
                 return;
             }
-            while ((this.onBlink_CameraAttribute && this.threadCameraAttribute.cameraManager != null)&&(pulseNumber<=200)) {
+            while ((this.onBlink_CameraAttribute && this.threadCameraAttribute.cameraManager != null)&&(pulseNumber<=4)) {
                 ++pulseNumber;
                 this.threadCameraAttribute.setparametersCamara_ON();
                 try {
@@ -160,6 +175,7 @@ public class MainActivity extends AppCompatActivity  {
                     this.threadCameraAttribute.setparametersCamara_OFF();
                 }*/
             }
+            pulseNumber=0;
         }
     }
 
@@ -208,6 +224,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Button  startBlink    =   findViewById(R.id.start_blinking);
         this.executorOfThread1 = Executors.newSingleThreadExecutor();
         this.thread1 = new classRunnableThread(this);
         thread1.setPriority(Thread.MAX_PRIORITY);
@@ -217,10 +234,15 @@ public class MainActivity extends AppCompatActivity  {
             this.cameraManager.release();
             this.cameraManager = null;
         }
-        this.thread1.onBlink_CameraAttribute = true;
+        //this.executorOfThread1.execute(this.thread1);
+        /*
+        thread1.onBlink_CameraAttribute = true;
         onStart();
         onResume();
-        //this.executorOfThread1.execute(this.thread1);
-        this.thread1.run();
+        //executorOfThread1.execute(this.thread1);
+        thread1.run();
+        releaseCamera();
+        */
+        startBlink.setOnClickListener(this);
     }
 }
